@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>Charlotte MODA - Tienda de Ropa Premium</title>
+  <meta name="description" content="Charlotte MODA: Tu tienda de ropa premium. Blusas, tops, vestidos y pantalones exclusivos. Compra fácil y recibe donde estés.">
+  <meta name="keywords" content="moda, ropa, tienda, blusas, tops, vestidos, pantalones, charlotte moda, bolivia">
+  <meta name="author" content="Charlotte MODA">
+  <link rel="icon" href="img/favicon.ico" type="image/x-icon">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Header -->
+  <header id="header">
+    <div class="logo-text-main">
+      <strong>Charlotte</strong><span>MODA</span>
+    </div>
+    <nav>
+      <a href="#home" class="active">Inicio</a>
+      <a href="#categories">Categorías</a>
+    </nav>
+    <div class="nav-icons">
+      <a href="https://www.instagram.com/charlotte_.moda/" target="_blank" aria-label="Instagram" class="social-icon"><i class="fab fa-instagram"></i></a>
+      <div class="cart-icon" id="cart-icon" aria-label="Carrito de compras" tabindex="0">
+        <i class="fas fa-shopping-bag"></i>
+        <span class="cart-count">0</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero" id="home">
+    <div class="hero-content animate">
+      <h1>Tu Estilo, Tu Esencia</h1>
+      <p>Moda premium en blusas, tops, vestidos y pantalones.<br>Compra fácil y recibe donde estés.</p>
+      <a href="#categories" class="btn btn-hero">Explorar Colección</a>
+    </div>
+  </section>
+
+  <!-- Categories Section -->
+  <section class="section categories" id="categories">
+    <h2 class="section-title">Categorías</h2>
+    <div class="categories-grid" id="categories-grid">
+      <div class="category-card animate" data-category="Blusas">
+        <img src="https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=400&q=80" alt="Blusas" class="category-img" />
+        <div class="category-info">
+          <h3 class="category-title">Blusas</h3>
+          <p class="category-count">3 productos</p>
+        </div>
+      </div>
+      <div class="category-card animate" data-category="Tops">
+        <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=400&q=80" alt="Tops" class="category-img" />
+        <div class="category-info">
+          <h3 class="category-title">Tops</h3>
+          <p class="category-count">3 productos</p>
+        </div>
+      </div>
+      <div class="category-card animate" data-category="Vestidos">
+        <img src="https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&w=400&q=80" alt="Vestidos" class="category-img" />
+        <div class="category-info">
+          <h3 class="category-title">Vestidos</h3>
+          <p class="category-count">3 productos</p>
+        </div>
+      </div>
+      <div class="category-card animate" data-category="Pantalones">
+        <img src="https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=400&q=80" alt="Pantalones" class="category-img" />
+        <div class="category-info">
+          <h3 class="category-title">Pantalones</h3>
+          <p class="category-count">3 productos</p>
+        </div>
+      </div>
+    </div>
+    <div class="category-filter-message" id="category-filter-message" style="display:none;"></div>
+    <div class="category-filter-reset" id="category-filter-reset" style="display:none;">
+      <button class="btn" onclick="resetCategoryFilter()">Ver todas las categorías</button>
+    </div>
+  </section>
+
+  <!-- Products by Category -->
+  <section class="section" id="products">
+    <h2 class="section-title" id="products-title" style="display:none;">Productos</h2>
+    <div class="products-grid" id="products-grid"></div>
+    <div class="no-products-message" id="no-products-message" style="display:none;">
+      <p>No hay productos en esta categoría por el momento.</p>
+    </div>
+  </section>
+
+  <!-- Contacto centrado -->
+  <section class="section contact" id="contact">
+    <h2 class="section-title">¡Contáctanos!</h2>
+    <div class="contact-content">
+      <a href="https://wa.me/59175053524" target="_blank" class="contact-btn whatsapp-btn-main">
+        <i class="fab fa-whatsapp"></i> WhatsApp
+      </a>
+      <a href="https://www.instagram.com/charlotte_.moda/" target="_blank" class="contact-btn instagram-btn-main">
+        <i class="fab fa-instagram"></i> Instagram
+      </a>
+    </div>
+  </section>
+
+  <!-- WhatsApp Button flotante -->
+  <a href="https://wa.me/59175053524" target="_blank" class="whatsapp-btn" aria-label="WhatsApp">
+    <i class="fab fa-whatsapp"></i>
+  </a>
+
+  <!-- Botón volver arriba -->
+  <button id="back-to-top" aria-label="Volver arriba"><i class="fas fa-chevron-up"></i></button>
+
+  <!-- Cart Sidebar -->
+  <div class="cart-overlay" id="cart-overlay"></div>
+  <div class="cart-sidebar" id="cart-sidebar" aria-label="Carrito de compras">
+    <div class="cart-header">
+      <h3 class="cart-title">Tu Carrito</h3>
+      <button class="close-cart" id="close-cart" aria-label="Cerrar carrito"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="cart-items" id="cart-items">
+      <div style="text-align: center; padding: 2rem; color: var(--text-light);">
+        <i class="fas fa-shopping-bag" style="font-size: 2rem; margin-bottom: 1rem;"></i>
+        <p>Tu carrito está vacío</p>
+      </div>
+    </div>
+    <div class="cart-footer">
+      <div class="cart-total">
+        <span>Total:</span>
+        <span id="cart-total">Bs. 0</span>
+      </div>
+      <button class="checkout-btn" id="checkout-btn">Finalizar Compra</button>
+    </div>
+  </div>
+
+  <!-- Checkout Modal -->
+  <div class="checkout-modal" id="checkout-modal" aria-modal="true" role="dialog">
+    <div class="modal-content">
+      <button class="modal-close" id="modal-close" aria-label="Cerrar"><i class="fas fa-times"></i></button>
+      <div class="modal-header">
+        <h3 class="modal-title">Finalizar Compra</h3>
+        <p>Completa tus datos y elige el método de pago</p>
+      </div>
+      <form id="checkout-form" autocomplete="off">
+        <div class="form-group">
+          <label for="name" class="form-label">Nombre Completo</label>
+          <input type="text" id="name" class="form-input" required />
+        </div>
+        <div class="form-group">
+          <label for="phone" class="form-label">Teléfono</label>
+          <input type="tel" id="phone" class="form-input" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Ubicación</label>
+          <button type="button" id="get-location" class="btn" style="margin-bottom:10px;">Obtener mi ubicación</button>
+          <input type="text" id="location" class="form-input" placeholder="Ubicación (se llenará automáticamente)" readonly required />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Método de pago</label>
+          <div class="payment-method-group">
+            <label><input type="radio" name="payment-method" value="efectivo" checked /> Efectivo</label>
+            <label><input type="radio" name="payment-method" value="qr" /> QR</label>
+          </div>
+        </div>
+        <div class="qr-section" id="qr-section">
+          <img src="img/qr.jpeg" alt="QR de pago" />
+          <div class="qr-msg">
+            Escanea el QR para pagar.<br>
+            <b>Luego de enviar tu pedido, adjunta el comprobante en WhatsApp.</b>
+          </div>
+        </div>
+        <button type="submit" class="submit-btn">Enviar Pedido por WhatsApp</button>
+        <div id="checkout-success" class="form-success" style="display:none;">¡Pedido enviado correctamente! Te contactaremos por WhatsApp.</div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-brand">
+        <span class="footer-title">Charlotte <span>MODA</span></span>
+        <p class="footer-desc">Tu estilo, tu esencia.</p>
+      </div>
+      <div class="footer-links">
+        <h4>Enlaces</h4>
+        <ul>
+          <li><a href="#home">Inicio</a></li>
+          <li><a href="#categories">Categorías</a></li>
+        </ul>
+      </div>
+      <div class="footer-contact">
+        <h4>Contacto</h4>
+        <p><i class="fab fa-whatsapp"></i> <a href="https://wa.me/59175053524" target="_blank">WhatsApp</a></p>
+        <p><i class="fab fa-instagram"></i> <a href="https://www.instagram.com/charlotte_.moda/" target="_blank">@charlotte_.moda</a></p>
+        <p><i class="fas fa-map-marker-alt"></i> Santa Cruz, Bolivia</p>
+      </div>
+      <div class="footer-social">
+        <h4>Síguenos</h4>
+        <a href="https://www.instagram.com/charlotte_.moda/" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+        <a href="https://wa.me/59175053524" target="_blank" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2025 Charlotte MODA. Todos los derechos reservados.</p>
+    </div>
+  </footer>
+
+  <!-- Aviso de cookies -->
+  <div class="cookie-banner" id="cookie-banner">
+    <span>Este sitio utiliza cookies para mejorar tu experiencia. <a href="#">Saber más</a></span>
+    <button id="cookie-accept" class="btn">Aceptar</button>
+  </div>
+
+  <script src="main.js"></script>
+</body>
+</html>
