@@ -8,7 +8,7 @@
   <link rel="icon" href="img/favicon.jpeg" type="image/x-icon">
   <!-- Fuentes -->
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-  <!-- AOS para animaciones al hacer scroll -->
+  <!-- AOS para animaciones -->
   <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
   <!-- Estilos -->
   <link rel="stylesheet" href="styles.css" />
@@ -17,24 +17,28 @@
 
   <!-- HEADER -->
   <header id="header">
-    <div class="logo" data-aos="fade-right"><strong>Charlotte</strong><span>MODA</span></div>
+    <div class="logo" data-aos="fade-right">
+      <strong>Charlotte</strong> <span>MODA</span>
+    </div>
     <nav data-aos="fade-down" data-aos-delay="100">
       <a href="#home" class="active">Inicio</a>
       <a href="#categories">Categorías</a>
       <a href="#contact">Contacto</a>
-      <div id="cart-btn" class="cart-btn"><i class="fas fa-shopping-bag"></i><span id="cart-count">0</span></div>
+      <!-- Carrito aparece solo si hay al menos 1 producto -->
+      <div id="cart-btn" class="cart-btn hidden" onclick="toggleCart()">
+        <i class="fas fa-shopping-bag"></i>
+        <span id="cart-count">0</span>
+      </div>
     </nav>
   </header>
 
   <!-- HERO -->
   <section id="home" class="hero">
     <div class="hero-content" data-aos="zoom-in">
-      <h1>Tu Estilo, Tu Esencia</h1>
-      <p>Descubre nuestra colección premium: blusas, tops, vestidos y pantalones.</p>
+      <h1 class="hero-title">Tu Estilo, Tu Esencia</h1>
+      <p class="hero-subtitle">Nuestra colección premium: blusas, tops, vestidos y pantalones diseñados para ti.</p>
       <a href="#categories" class="btn-primary">Ver Categorías</a>
     </div>
-    <!-- Botón Instagram fijo -->
-    <a href="https://www.instagram.com/charlotte_.moda/" target="_blank" class="social-float insta"><i class="fab fa-instagram"></i></a>
   </section>
 
   <!-- CATEGORÍAS -->
@@ -68,12 +72,12 @@
   <aside id="cart-sidebar" class="sidebar cart-sidebar" data-aos="slide-left">
     <header>
       <h3>Tu Carrito</h3>
-      <button id="cart-close"><i class="fas fa-times"></i></button>
+      <button id="cart-close" onclick="toggleCart()"><i class="fas fa-times"></i></button>
     </header>
     <ul id="cart-items" class="cart-items"></ul>
     <div class="cart-footer">
       <div>Total: <span id="cart-total">Bs. 0</span></div>
-      <button id="checkout-btn" class="btn-primary">Finalizar Compra</button>
+      <button id="checkout-btn" class="btn-primary">Comprar</button>
     </div>
   </aside>
 
@@ -87,7 +91,7 @@
         <input type="tel" id="phone" placeholder="Teléfono" required />
         <div class="location-group">
           <button type="button" id="get-location">📍 Ubicación</button>
-          <input type="text" id="location" placeholder="Tu ubicación (opcional)" readonly />
+          <input type="text" id="location" placeholder="Ubicación (opcional)" readonly />
         </div>
         <div class="payment-group">
           <label><input type="radio" name="payment" value="efectivo" checked /> Efectivo</label>
@@ -95,7 +99,7 @@
         </div>
         <div id="qr-section" class="qr-section">
           <img src="img/qr.jpeg" alt="QR de pago" />
-          <p>Escanea y adjunta comprobante.</p>
+          <p>Enviar comprobante para finalizar la compra.</p>
         </div>
         <button type="submit" class="btn-primary">Enviar por WhatsApp</button>
       </form>
@@ -118,9 +122,8 @@
     <button id="cookie-accept" class="btn-secondary">Aceptar</button>
   </div>
 
-  <!-- BACK TO TOP y WhatsApp fijo -->
+  <!-- BACK TO TOP -->
   <button id="back-to-top" class="back-top"><i class="fas fa-chevron-up"></i></button>
-  <a href="https://wa.me/59175053524" class="social-float whatsapp"><i class="fab fa-whatsapp"></i></a>
 
   <!-- Scripts -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" defer></script>
