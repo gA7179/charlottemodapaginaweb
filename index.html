@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Charlotte MODA</title>
+  <title>Charlotte MODA | Moda Femenina Premium</title>
   <meta name="description" content="Charlotte MODA: Blusas, tops, vestidos y pantalones premium. Compra fácil y recibe donde estés.">
   <link rel="icon" href="img/favicon.jpeg" type="image/x-icon">
   <!-- Fuentes -->
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
   <!-- AOS para animaciones -->
   <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
   <!-- Estilos -->
@@ -23,8 +23,9 @@
     <nav data-aos="fade-down" data-aos-delay="100">
       <a href="#home" class="active">Inicio</a>
       <a href="#categories">Categorías</a>
+      <a href="#products">Productos</a>
       <a href="#contact">Contacto</a>
-      <!-- Carrito aparece solo si hay al menos 1 producto -->
+      <!-- Carrito flotante mejorado -->
       <div id="cart-btn" class="cart-btn hidden" onclick="toggleCart()">
         <i class="fas fa-shopping-bag"></i>
         <span id="cart-count">0</span>
@@ -36,14 +37,16 @@
   <section id="home" class="hero">
     <div class="hero-content" data-aos="zoom-in">
       <h1 class="hero-title">Tu Estilo, Tu Esencia</h1>
-      <p class="hero-subtitle">Nuestra colección premium: blusas, tops, vestidos y pantalones diseñados para ti.</p>
-      <a href="#categories" class="btn-primary">Ver Categorías</a>
+      <p class="hero-subtitle">Nuestra colección premium: blusas, tops, vestidos y pantalones diseñados para ti</p>
+      <div class="hero-cta">
+        <a href="#categories" class="btn-primary">Ver Colección</a>
+      </div>
     </div>
   </section>
 
   <!-- CATEGORÍAS -->
   <section id="categories" class="section categories">
-    <h2 data-aos="fade-up">Categorías</h2>
+    <h2 data-aos="fade-up">Nuestras Categorías</h2>
     <div class="grid-4">
       <div class="cat-card" data-cat="Blusas" data-aos="fade-up" data-aos-delay="100">
         <h3>Blusas</h3>
@@ -62,48 +65,90 @@
 
   <!-- PRODUCTOS -->
   <section id="products" class="section products">
-    <h2 id="products-title" data-aos="fade-up">Todos los productos</h2>
-    <div id="products-grid" class="grid-3"></div>
+    <h2 id="products-title" data-aos="fade-up">Nuestros Productos</h2>
+    <div id="products-grid" class="products-container"></div>
     <p id="no-products" class="no-products" data-aos="fade-up">No hay productos en esta categoría.</p>
   </section>
 
-  <!-- CARRITO -->
+  <!-- NOTIFICACIÓN FLOTANTE -->
+  <div id="notification" class="notification">
+    <span id="notification-text">Producto agregado al carrito</span>
+  </div>
+
+  <!-- CARRITO FLOTANTE MEJORADO -->
   <div id="cart-overlay" class="overlay"></div>
-  <aside id="cart-sidebar" class="sidebar cart-sidebar" data-aos="slide-left">
+  <aside id="cart-sidebar" class="sidebar cart-sidebar">
     <header>
-      <h3>Tu Carrito</h3>
+      <h3><i class="fas fa-shopping-bag"></i> Tu Carrito</h3>
       <button id="cart-close" onclick="toggleCart()"><i class="fas fa-times"></i></button>
     </header>
-    <ul id="cart-items" class="cart-items"></ul>
-    <div class="cart-footer">
-      <div>Total: <span id="cart-total">Bs. 0</span></div>
-      <button id="checkout-btn" class="btn-primary">Comprar</button>
+    <div class="cart-content">
+      <ul id="cart-items" class="cart-items"></ul>
+      <div class="cart-footer">
+        <div class="cart-summary">
+          <span>Total:</span>
+          <span id="cart-total">Bs. 0</span>
+        </div>
+        <button id="checkout-btn" class="btn-primary">Finalizar Compra</button>
+      </div>
     </div>
   </aside>
 
   <!-- CHECKOUT -->
   <div id="checkout-modal" class="modal">
-    <div class="modal-content" data-aos="zoom-in">
+    <div class="modal-content">
       <button id="modal-close" class="modal-close"><i class="fas fa-times"></i></button>
       <h3>Finalizar Pedido</h3>
       <form id="checkout-form">
-        <input type="text" id="name" placeholder="Nombre completo" required />
-        <input type="tel" id="phone" placeholder="Teléfono" required />
-        <div class="location-group">
-          <button type="button" id="get-location">📍 Ubicación</button>
-          <input type="text" id="location" placeholder="Ubicación (opcional)" readonly />
+        <div class="form-group">
+          <input type="text" id="name" placeholder="Nombre completo" required />
         </div>
-        <div class="payment-group">
-          <label><input type="radio" name="payment" value="efectivo" checked /> Efectivo</label>
-          <label><input type="radio" name="payment" value="qr" /> QR</label>
+        <div class="form-group">
+          <input type="tel" id="phone" placeholder="Teléfono" required />
+        </div>
+        <div class="form-group">
+          <div class="location-group">
+            <button type="button" id="get-location" class="btn-location">
+              <i class="fas fa-map-marker-alt"></i> Obtener Ubicación
+            </button>
+            <input type="text" id="location" placeholder="Dirección (opcional)" readonly />
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="payment-group">
+            <label class="payment-option">
+              <input type="radio" name="payment" value="efectivo" checked />
+              <div class="payment-content">
+                <i class="fas fa-money-bill-wave"></i>
+                <span>Efectivo</span>
+              </div>
+            </label>
+            <label class="payment-option">
+              <input type="radio" name="payment" value="qr" />
+              <div class="payment-content">
+                <i class="fas fa-qrcode"></i>
+                <span>QR</span>
+              </div>
+            </label>
+          </div>
         </div>
         <div id="qr-section" class="qr-section">
-          <img src="img/qr.jpeg" alt="QR de pago" />
-          <p>Enviar comprobante para finalizar la compra.</p>
+          <div class="qr-container">
+            <img src="img/qr.jpeg" alt="QR de pago" />
+            <p>Envía el comprobante para confirmar tu pedido</p>
+          </div>
         </div>
-        <button type="submit" class="btn-primary">Enviar por WhatsApp</button>
+        <button type="submit" class="btn-primary btn-submit">
+          <i class="fab fa-whatsapp"></i> Enviar por WhatsApp
+        </button>
       </form>
-      <div id="success-msg" class="success-msg">✅ ¡Pedido enviado!</div>
+      <div id="success-msg" class="success-msg">
+        <i class="fas fa-check-circle"></i>
+        <div>
+          <h4>¡Pedido enviado!</h4>
+          <p>Nos pondremos en contacto contigo</p>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -111,26 +156,40 @@
   <section id="contact" class="section contact">
     <h2 data-aos="fade-up">Contáctanos</h2>
     <div class="contact-links" data-aos="fade-up" data-aos-delay="100">
-      <a href="https://wa.me/59175053524" class="btn-secondary"><i class="fab fa-whatsapp"></i> WhatsApp</a>
-      <a href="https://www.instagram.com/charlotte_.moda/" class="btn-secondary"><i class="fab fa-instagram"></i> Instagram</a>
+      <a href="https://wa.me/59175053524" class="btn-contact whatsapp-btn">
+        <i class="fab fa-whatsapp"></i> WhatsApp
+      </a>
+      <a href="https://www.instagram.com/charlotte_.moda/" class="btn-contact instagram-btn">
+        <i class="fab fa-instagram"></i> Instagram
+      </a>
     </div>
   </section>
 
-  <!-- COOKIES -->
-  <div id="cookie-banner" class="cookie-banner">
-    <span>Usamos cookies para mejorar tu experiencia. <a href="#">Más info</a></span>
-    <button id="cookie-accept" class="btn-secondary">Aceptar</button>
-  </div>
-
-  <!-- BACK TO TOP -->
-  <button id="back-to-top" class="back-top"><i class="fas fa-chevron-up"></i></button>
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="logo">
+        <strong>Charlotte</strong> <span>MODA</span>
+      </div>
+      <p>Moda femenina con estilo y elegancia</p>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2023 Charlotte MODA. Todos los derechos reservados.</p>
+    </div>
+  </footer>
 
   <!-- Scripts -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" defer></script>
   <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
   <script defer src="main.js"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', () => AOS.init({ duration: 800, once: true }));
+    document.addEventListener('DOMContentLoaded', () => {
+      AOS.init({
+        duration: 800,
+        once: true,
+        easing: 'ease-in-out-quad'
+      });
+    });
   </script>
 </body>
 </html>

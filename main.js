@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
+  // Datos de productos
   const allProducts = [
     { id:1, name:'Blusa Elegante', price:50, category:'Blusas', image:'img/blusa1.jpeg' },
     { id:2, name:'Blusa Clásica', price:50, category:'Blusas', image:'img/blusa2.jpeg' },
@@ -13,142 +14,280 @@ document.addEventListener('DOMContentLoaded', () => {
     { id:11,name:'Pantalón Moderno',price:50,category:'Pantalones',image:'img/pantalon2.jpeg'},
     { id:12,name:'Pantalón Elegante',price:50,category:'Pantalones',image:'img/pantalon3.jpeg'}
   ];
-  let cart = [], cartTotal = 0;
-
-  const productsGrid   = document.getElementById('products-grid');
-  const productsTitle  = document.getElementById('products-title');
-  const noProducts     = document.getElementById('no-products');
-  const catCards       = document.querySelectorAll('.cat-card');
-  const cartBtn        = document.getElementById('cart-btn');
-  const cartOverlay    = document.getElementById('cart-overlay');
-  const cartSidebar    = document.getElementById('cart-sidebar');
-  const cartItems      = document.getElementById('cart-items');
-  const cartCount      = document.getElementById('cart-count');
-  const cartTotalEl    = document.getElementById('cart-total');
-  const cartClose      = document.getElementById('cart-close');
-  const checkoutBtn    = document.getElementById('checkout-btn');
-  const checkoutModal  = document.getElementById('checkout-modal');
-  const modalClose     = document.getElementById('modal-close');
-  const checkoutForm   = document.getElementById('checkout-form');
-  const successMsg     = document.getElementById('success-msg');
-
+  
+  // Estado de la aplicación
+  let cart = [];
+  let cartTotal = 0;
+  
+  // Elementos del DOM
+  const productsGrid = document.getElementById('products-grid');
+  const productsTitle = document.getElementById('products-title');
+  const noProducts = document.getElementById('no-products');
+  const catCards = document.querySelectorAll('.cat-card');
+  const cartBtn = document.getElementById('cart-btn');
+  const cartOverlay = document.getElementById('cart-overlay');
+  const cartSidebar = document.getElementById('cart-sidebar');
+  const cartItems = document.getElementById('cart-items');
+  const cartCount = document.getElementById('cart-count');
+  const cartTotalEl = document.getElementById('cart-total');
+  const cartClose = document.getElementById('cart-close');
+  const checkoutBtn = document.getElementById('checkout-btn');
+  const checkoutModal = document.getElementById('checkout-modal');
+  const modalClose = document.getElementById('modal-close');
+  const checkoutForm = document.getElementById('checkout-form');
+  const successMsg = document.getElementById('success-msg');
+  const notification = document.getElementById('notification');
+  const notificationText = document.getElementById('notification-text');
+  
+  // Función para renderizar productos
   function renderProducts(cat = null) {
     productsGrid.innerHTML = '';
-    let list = cat ? allProducts.filter(p=>p.category===cat) : allProducts;
-    productsTitle.textContent = cat ? `Productos de ${cat}` : 'Todos los productos';
+    let list = cat ? allProducts.filter(p => p.category === cat) : allProducts;
+    
+    productsTitle.textContent = cat ? `${cat}` : 'Nuestros Productos';
     noProducts.style.display = list.length ? 'none' : 'block';
+    
     list.forEach(p => {
-      const div = document.createElement('div');
-      div.className = 'product-card';
-      div.innerHTML = `
+      const productCard = document.createElement('div');
+      productCard.className = 'product-card';
+      productCard.dataset.aos = 'fade-up';
+      
+      productCard.innerHTML = `
         <img src="${p.image}" alt="${p.name}" onerror="this.src='img/favicon.jpeg'">
         <div class="product-info">
           <h4>${p.name}</h4>
           <p class="price">Bs. ${p.price}</p>
-          <button class="add-btn">Comprar</button>
-        </div>`;
-      div.querySelector('.add-btn').onclick = () => addToCart(p);
-      productsGrid.appendChild(div);
+          <button class="add-btn">Añadir al carrito</button>
+        </div>
+      `;
+      
+      productCard.querySelector('.add-btn').addEventListener('click', () => {
+        addToCart(p);
+        // Mostrar el carrito flotante al agregar producto
+        if (!cartSidebar.classList.contains('active')) {
+          toggleCart();
+          // Ocultar después de 3 segundos
+          setTimeout(() => {
+            if (cartSidebar.classList.contains('active')) {
+              toggleCart();
+            }
+          }, 3000);
+        }
+      });
+      
+      productsGrid.appendChild(productCard);
     });
-    // mostrar carrito icono si hay
+    
+    // Actualizar visibilidad del botón del carrito
     cartBtn.classList.toggle('hidden', cart.length === 0);
   }
-
-  catCards.forEach(card => {
-    card.onclick = () => {
-      renderProducts(card.dataset.cat);
-      document.getElementById('products').scrollIntoView({ behavior:'smooth' });
-    };
-  });
-
-  function addToCart(prod) {
-    const exists = cart.find(i=>i.id===prod.id);
-    exists ? exists.quantity++ : cart.push({ ...prod, quantity:1 });
-    updateCart();
-    renderProducts(); // para mostrar o ocultar carrito icono
+  
+  // Función para mostrar notificación
+  function showNotification(message) {
+    notificationText.textContent = message;
+    notification.classList.add('show');
+    
+    setTimeout(() => {
+      notification.classList.remove('show');
+    }, 3000);
   }
-
+  
+  // Función para añadir al carrito
+  function addToCart(prod) {
+    const exists = cart.find(i => i.id === prod.id);
+    
+    if (exists) {
+      exists.quantity++;
+    } else {
+      cart.push({ ...prod, quantity: 1 });
+    }
+    
+    updateCart();
+    showNotification(`${prod.name} añadido al carrito`);
+    
+    // Mostrar el botón del carrito si estaba oculto
+    if (cartBtn.classList.contains('hidden')) {
+      cartBtn.classList.remove('hidden');
+    }
+  }
+  
+  // Función para actualizar el carrito
   function updateCart() {
     cartItems.innerHTML = '';
-    cartTotal = 0; let totalCount = 0;
-    if (!cart.length) {
-      cartItems.innerHTML = '<li class="empty">Tu carrito está vacío.</li>';
+    cartTotal = 0;
+    let totalCount = 0;
+    
+    if (cart.length === 0) {
+      cartItems.innerHTML = '<li class="empty">Tu carrito está vacío</li>';
     } else {
-      cart.forEach(i => {
-        cartTotal += i.price * i.quantity;
-        totalCount += i.quantity;
-        const li = document.createElement('li');
-        li.className = 'cart-item';
-        li.innerHTML = `
-          <img src="${i.image}" alt="${i.name}">
+      cart.forEach(item => {
+        cartTotal += item.price * item.quantity;
+        totalCount += item.quantity;
+        
+        const cartItem = document.createElement('li');
+        cartItem.className = 'cart-item';
+        
+        cartItem.innerHTML = `
+          <img src="${item.image}" alt="${item.name}" onerror="this.src='img/favicon.jpeg'">
           <div class="item-info">
-            <h5>${i.name}</h5>
-            <p>Bs. ${i.price} x ${i.quantity}</p>
+            <h5>${item.name}</h5>
+            <p>Bs. ${item.price} x ${item.quantity}</p>
           </div>
-          <button onclick="removeFromCart(${i.id})">✕</button>`;
-        cartItems.appendChild(li);
+          <button onclick="removeFromCart(${item.id})">✕</button>
+        `;
+        
+        cartItems.appendChild(cartItem);
       });
     }
+    
     cartCount.textContent = totalCount;
     cartTotalEl.textContent = `Bs. ${cartTotal}`;
   }
-
-  window.removeFromCart = id => { cart = cart.filter(i=>i.id!==id); updateCart(); renderProducts(); };
-
-  cartBtn.onclick = () => { cartOverlay.classList.add('active'); cartSidebar.classList.add('active'); };
-  cartClose.onclick = () => { cartOverlay.classList.remove('active'); cartSidebar.classList.remove('active'); };
-
-  checkoutBtn.onclick = () => {
-    if (!cart.length) return alert('Tu carrito está vacío');
-    checkoutModal.classList.add('active');
+  
+  // Función para eliminar del carrito (global para poder llamarla desde HTML)
+  window.removeFromCart = (id) => {
+    cart = cart.filter(item => item.id !== id);
+    updateCart();
+    
+    // Ocultar el botón del carrito si no hay productos
+    if (cart.length === 0) {
+      cartBtn.classList.add('hidden');
+    }
   };
-  modalClose.onclick = () => checkoutModal.classList.remove('active');
-
-  document.getElementById('get-location').onclick = () => {
-    if (!navigator.geolocation) return alert('Geolocalización no soportada');
-    navigator.geolocation.getCurrentPosition(pos => {
-      document.getElementById('location').value =
-        `https://www.google.com/maps?q=${pos.coords.latitude},${pos.coords.longitude}`;
-    }, ()=> alert('Error al obtener ubicación'));
+  
+  // Función para alternar el carrito
+  window.toggleCart = () => {
+    cartOverlay.classList.toggle('active');
+    cartSidebar.classList.toggle('active');
   };
-
-  document.querySelectorAll('input[name="payment"]').forEach(radio => {
-    radio.onchange = () =>
-      document.getElementById('qr-section').style.display = radio.value==='qr'?'flex':'none';
+  
+  // Event listeners para categorías
+  catCards.forEach(card => {
+    card.addEventListener('click', () => {
+      renderProducts(card.dataset.cat);
+      document.getElementById('products').scrollIntoView({ behavior: 'smooth' });
+    });
   });
-
-  checkoutForm.onsubmit = e => {
+  
+  // Event listeners para el carrito
+  cartBtn.addEventListener('click', toggleCart);
+  cartClose.addEventListener('click', toggleCart);
+  cartOverlay.addEventListener('click', toggleCart);
+  
+  // Event listener para el botón de compra
+  checkoutBtn.addEventListener('click', () => {
+    if (cart.length === 0) {
+      showNotification('Tu carrito está vacío');
+      return;
+    }
+    checkoutModal.classList.add('active');
+  });
+  
+  // Event listener para cerrar el modal
+  modalClose.addEventListener('click', () => {
+    checkoutModal.classList.remove('active');
+  });
+  
+  // Event listener para obtener ubicación
+  document.getElementById('get-location').addEventListener('click', () => {
+    if (!navigator.geolocation) {
+      showNotification('Geolocalización no soportada en tu navegador');
+      return;
+    }
+    
+    showNotification('Obteniendo tu ubicación...');
+    
+    navigator.geolocation.getCurrentPosition(
+      position => {
+        const { latitude, longitude } = position.coords;
+        document.getElementById('location').value = 
+          `https://www.google.com/maps?q=${latitude},${longitude}`;
+        showNotification('Ubicación obtenida con éxito');
+      },
+      () => {
+        showNotification('No se pudo obtener la ubicación');
+      }
+    );
+  });
+  
+  // Event listeners para métodos de pago
+  document.querySelectorAll('input[name="payment"]').forEach(radio => {
+    radio.addEventListener('change', () => {
+      document.getElementById('qr-section').style.display = 
+        radio.value === 'qr' ? 'flex' : 'none';
+    });
+  });
+  
+  // Event listener para el formulario de compra
+  checkoutForm.addEventListener('submit', (e) => {
     e.preventDefault();
+    
     const name = document.getElementById('name').value.trim();
-    const phone= document.getElementById('phone').value.trim();
-    if(!name||!phone) return alert('Completa los campos');
-    let msg = `🛍️ Pedido Charlotte MODA%0A%0A`;
-    cart.forEach(i=> msg+=`- ${i.name} x${i.quantity} = Bs. ${i.price*i.quantity}%0A`);
-    msg += `%0ATotal: Bs. ${cartTotal}%0ANombre: ${name}%0ATeléfono: ${phone}%0A`;
-    const loc = document.getElementById('location').value;
-    if(loc) msg+=`Ubicación: ${loc}%0A`;
-    const pay = document.querySelector('input[name="payment"]:checked').value;
-    msg+=`Pago: ${pay==='qr'?'QR':'Efectivo'}%0A`;
-    if(pay==='qr') msg+=`Adjunta comprobante QR.%0A`;
-    msg+=`¡Gracias por tu compra!`;
-    window.open(`https://wa.me/59175053524?text=${encodeURIComponent(msg)}`, '_blank');
-    successMsg.style.display='block';
-    setTimeout(()=>{
-      successMsg.style.display='none';
+    const phone = document.getElementById('phone').value.trim();
+    
+    if (!name || !phone) {
+      showNotification('Por favor completa todos los campos requeridos');
+      return;
+    }
+    
+    // Construir mensaje para WhatsApp
+    let message = `🛍️ *Pedido Charlotte MODA*%0A%0A`;
+    message += `*Detalle del pedido:*%0A`;
+    
+    cart.forEach(item => {
+      message += `- ${item.name} x${item.quantity} = Bs. ${item.price * item.quantity}%0A`;
+    });
+    
+    message += `%0A*Total:* Bs. ${cartTotal}%0A`;
+    message += `*Nombre:* ${name}%0A`;
+    message += `*Teléfono:* ${phone}%0A`;
+    
+    const location = document.getElementById('location').value;
+    if (location) {
+      message += `*Ubicación:* ${location}%0A`;
+    }
+    
+    const paymentMethod = document.querySelector('input[name="payment"]:checked').value;
+    message += `*Pago:* ${paymentMethod === 'qr' ? 'Transferencia QR' : 'Efectivo'}%0A`;
+    
+    if (paymentMethod === 'qr') {
+      message += `(Adjuntaré comprobante de pago)%0A`;
+    }
+    
+    message += `%0A¡Gracias por tu compra! 💖`;
+    
+    // Abrir WhatsApp con el mensaje
+    window.open(`https://wa.me/59175053524?text=${message}`, '_blank');
+    
+    // Mostrar mensaje de éxito
+    successMsg.style.display = 'flex';
+    
+    // Resetear después de 3 segundos
+    setTimeout(() => {
+      successMsg.style.display = 'none';
       checkoutModal.classList.remove('active');
-      cart=[]; updateCart(); renderProducts();
-    },3000);
-  };
-
-  setTimeout(()=>document.getElementById('cookie-banner').classList.add('show'),2000);
-  document.getElementById('cookie-accept').onclick = () =>
-    document.getElementById('cookie-banner').classList.remove('show');
-
-  const backTop = document.getElementById('back-to-top');
-  window.onscroll = ()=> backTop.classList.toggle('show', window.scrollY>300);
-  backTop.onclick = ()=> window.scrollTo({top:0,behavior:'smooth'});
-
-  // Inicial
+      cart = [];
+      updateCart();
+      renderProducts();
+      checkoutForm.reset();
+    }, 3000);
+  });
+  
+  // Inicialización
   renderProducts();
   updateCart();
+  
+  // Prevenir desplazamiento horizontal
+  document.body.addEventListener('wheel', (e) => {
+    if (e.deltaY === 0) {
+      e.preventDefault();
+    }
+  }, { passive: false });
+  
+  // Deshabilitar zoom con touch en dispositivos móviles
+  document.addEventListener('touchmove', (e) => {
+    if (e.scale !== 1) {
+      e.preventDefault();
+    }
+  }, { passive: false });
 });
