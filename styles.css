@@ -569,6 +569,13 @@ nav a.active, nav a:hover {
   bottom: 0;
   z-index: 2;
 }
+.cart-shipping {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+}
 .cart-total {
   display: flex;
   justify-content: space-between;
@@ -960,4 +967,13 @@ nav a.active, nav a:hover {
   .footer-content {
     grid-template-columns: 1fr;
   }
+}
+
+#shipping-group {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-weight: 600;
+  font-size: 1rem;
+  margin-bottom: 1rem;
 }

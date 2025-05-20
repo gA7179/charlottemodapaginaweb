@@ -210,6 +210,9 @@ document.addEventListener('DOMContentLoaded', function() {
           <p>Tu carrito está vacío</p>
         </div>
       `;
+      // Ya no actualices shipping-cost aquí, solo cart-total
+      document.getElementById('cart-total').textContent = 'Bs. 0';
+      window.costoEnvioCalculado = 0;
     } else {
       cart.forEach(item => {
         cartTotal += item.price * item.quantity;
@@ -226,11 +229,10 @@ document.addEventListener('DOMContentLoaded', function() {
           </div>
         `;
       });
+      document.getElementById('cart-total').textContent = `Bs. ${cartTotal + (window.costoEnvioCalculado || 0)}`;
     }
 
-    cartTotalEl.textContent = `Bs. ${cartTotal}`;
     cartCountEl.textContent = totalItems;
-    // sincroniza contador flotante (ya es el mismo botón)
   }
 
   // Abrir/cerrar carrito
@@ -268,6 +270,26 @@ document.addEventListener('DOMContentLoaded', function() {
     document.body.classList.remove('no-scroll');
   });
 
+  // Punto base de origen (Mercadito Las Américas, Santa Cruz, Bolivia)
+  const origen = {
+    lat: -17.85507,
+    lng: -63.19901
+  };
+  const costoPorKm = 2;
+  window.costoEnvioCalculado = 0;
+
+  function calcularDistanciaKm(lat1, lon1, lat2, lon2) {
+    const R = 6371;
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+  }
+
   // Ubicación en el checkout
   const getLocationBtn = document.getElementById('get-location');
   const locationInput = document.getElementById('location');
@@ -285,12 +307,27 @@ document.addEventListener('DOMContentLoaded', function() {
             locationInput.value = `https://www.google.com/maps?q=${lat},${lon}`;
             getLocationBtn.textContent = "Ubicación obtenida";
             getLocationBtn.disabled = false;
+
+            // Calcular distancia y costo de envío
+            const distancia = calcularDistanciaKm(origen.lat, origen.lng, lat, lon);
+            const costoEnvio = Math.round(distancia * costoPorKm);
+            window.costoEnvioCalculado = costoEnvio;
+            document.getElementById('shipping-cost').textContent = `Bs. ${costoEnvio}`;
+            document.getElementById('cart-total').textContent = `Bs. ${cartTotal + costoEnvio}`;
           },
           function(error) {
             locationInput.value = "";
             getLocationBtn.textContent = "Error al obtener ubicación";
             getLocationBtn.disabled = false;
             alert("No se pudo obtener tu ubicación. Por favor ingrésala manualmente.");
+            window.costoEnvioCalculado = 0;
+            document.getElementById('shipping-cost').textContent = 'Bs. 0';
+            document.getElementById('cart-total').textContent = `Bs. ${cartTotal}`;
+          },
+          {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 0
           }
         );
       } else {
@@ -332,32 +369,53 @@ document.addEventListener('DOMContentLoaded', function() {
       return;
     }
 
-    // Crear mensaje para WhatsApp
-    let message = `🛍️ *Pedido Charlotte MODA*%0A%0A`;
-    message += `*Productos:*%0A`;
+    // Fecha y hora actual
+    const now = new Date();
+    const pad = n => n.toString().padStart(2, '0');
+    const fecha = `${pad(now.getDate())}/${pad(now.getMonth() + 1)}/${now.getFullYear()}`;
+    const hora = `${pad(now.getHours())}:${pad(now.getMinutes())}`;
 
+    // Link de la página
+    const pagina = "https://ga7179.github.io/charlottemodapaginaweb/";
+
+    // Detalle de productos
+    let productosMsg = "";
     cart.forEach(item => {
-      message += `- ${item.name} (${item.category}) x${item.quantity} = Bs. ${item.price * item.quantity}%0A`;
+      productosMsg += `x${item.quantity} ${item.name}   Bs ${item.price * item.quantity}.00 BOB\n`;
     });
 
-    message += `%0A*Total:* Bs. ${cartTotal}%0A`;
-    message += `*Nombre:* ${name}%0A`;
-    message += `*Teléfono:* ${phone}%0A`;
+    // Costos
+    const totalParcial = cartTotal;
+    const costoEnvio = window.costoEnvioCalculado || 0;
+    const totalFinal = cartTotal + costoEnvio;
+    const metodoPago = paymentMethod === 'qr' ? 'QR' : 'Efectivo';
 
-    if (location) {
-      message += `*Ubicación:* ${location}%0A`;
-    }
+    // Mensaje final adaptado (nuevo formato)
+    let message = `¡Hola! Vengo de: ${pagina}\n\n`;
+    message += `🗓️ Fecha: ${fecha}\n`;
+    message += `🕐 Hora: ${hora}\n\n`;
+    message += `👤 Información del cliente\n`;
+    message += `Nombre: ${name}\n`;
+    message += `Teléfono: ${phone}\n\n`;
+    message += `🏠 El pedido se llevará a domicilio:\n`;
+    message += `📍 Dirección: ${location ? location : ''}\n\n`;
+    message += `📝 Pedido:\n`;
+    message += `${productosMsg}\n`;
+    message += `💲 Costos:\n`;
+    message += `Total parcial: Bs ${totalParcial}.00 BOB\n`;
+    message += `Costo de envío: Bs ${costoEnvio}.00 BOB\n`;
+    message += `Método de Pago: ${metodoPago}\n\n`;
+    message += `Costo total: Bs ${totalFinal}.00 BOB`;
 
-    message += `*Método de pago:* ${paymentMethod === 'qr' ? 'QR' : 'Efectivo'}%0A%0A`;
+    // Codificar el mensaje para WhatsApp
+    let mensajeCodificado = encodeURIComponent(message);
 
-    if (paymentMethod === 'qr') {
-      message += `Por favor adjunta el comprobante de pago QR.%0A`;
-    }
+    // Armar link de WhatsApp
+    let numero = "59175053524"; // Número del dueño de la tienda
+    let url = `https://wa.me/${numero}?text=${mensajeCodificado}`;
 
-    message += `¡Gracias por tu compra!`;
-
-    // Abrir WhatsApp
-    window.open(`https://wa.me/59175053524?text=${encodeURIComponent(message)}`, '_blank');
+    // Abrir WhatsApp con el mensaje
+    window.open(url);
 
     // Mostrar mensaje de éxito
     document.getElementById('checkout-success').style.display = 'flex';
@@ -372,6 +430,9 @@ document.addEventListener('DOMContentLoaded', function() {
       checkoutForm.reset();
       qrSection.style.display = 'none';
       document.body.classList.remove('no-scroll');
+      window.costoEnvioCalculado = 0;
+      document.getElementById('shipping-cost').textContent = 'Bs. 0';
+      document.getElementById('cart-total').textContent = 'Bs. 0';
     }, 3000);
   });
 
