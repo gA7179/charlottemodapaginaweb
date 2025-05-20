@@ -237,13 +237,13 @@ document.addEventListener('DOMContentLoaded', function() {
   function openCart() {
     cartOverlay.classList.add('active');
     cartSidebar.classList.add('active');
-    document.body.style.overflow = 'hidden';
+    document.body.classList.add('no-scroll');
   }
 
   function closeCartSidebar() {
     cartOverlay.classList.remove('active');
     cartSidebar.classList.remove('active');
-    document.body.style.overflow = '';
+    document.body.classList.remove('no-scroll');
   }
 
   if (cartIcon) cartIcon.addEventListener('click', openCart);
@@ -260,12 +260,12 @@ document.addEventListener('DOMContentLoaded', function() {
   // Checkout
   checkoutBtn.addEventListener('click', function() {
     checkoutModal.classList.add('active');
-    document.body.style.overflow = 'hidden';
+    document.body.classList.add('no-scroll');
   });
 
   modalClose.addEventListener('click', function() {
     checkoutModal.classList.remove('active');
-    document.body.style.overflow = '';
+    document.body.classList.remove('no-scroll');
   });
 
   // Ubicación en el checkout
@@ -371,6 +371,7 @@ document.addEventListener('DOMContentLoaded', function() {
       closeCartSidebar();
       checkoutForm.reset();
       qrSection.style.display = 'none';
+      document.body.classList.remove('no-scroll');
     }, 3000);
   });
 
