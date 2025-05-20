@@ -153,6 +153,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Carrito
   const cartIcon = document.getElementById('cart-icon');
+  const cartFloatBtn = document.getElementById('cart-float-btn');
   const cartOverlay = document.getElementById('cart-overlay');
   const cartSidebar = document.getElementById('cart-sidebar');
   const closeCart = document.getElementById('close-cart');
@@ -196,7 +197,7 @@ document.addEventListener('DOMContentLoaded', function() {
     setTimeout(() => cartIcon.classList.remove('pulse'), 1000);
   }
 
-  // Actualizar carrito
+  // Actualizar carrito (sincroniza contador flotante)
   function updateCart() {
     cartItemsContainer.innerHTML = '';
     cartTotal = 0;
@@ -229,6 +230,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     cartTotalEl.textContent = `Bs. ${cartTotal}`;
     cartCountEl.textContent = totalItems;
+    // sincroniza contador flotante (ya es el mismo botón)
   }
 
   // Abrir/cerrar carrito
@@ -244,7 +246,8 @@ document.addEventListener('DOMContentLoaded', function() {
     document.body.style.overflow = '';
   }
 
-  cartIcon.addEventListener('click', openCart);
+  if (cartIcon) cartIcon.addEventListener('click', openCart);
+  if (cartFloatBtn) cartFloatBtn.addEventListener('click', openCart);
   closeCart.addEventListener('click', closeCartSidebar);
   cartOverlay.addEventListener('click', closeCartSidebar);
 

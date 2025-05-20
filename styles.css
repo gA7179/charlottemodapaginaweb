@@ -125,6 +125,9 @@ nav a.active, nav a:hover {
   color: var(--primary-dark);
 }
 .cart-icon {
+  display: none;
+}
+.cart-icon {
   position: relative;
   color: var(--primary);
   font-size: 1.4rem;
@@ -384,10 +387,13 @@ nav a.active, nav a:hover {
 
 /* WhatsApp flotante */
 .whatsapp-btn {
+  display: none;
+}
+.cart-float-btn {
   position: fixed;
   bottom: 2rem;
   right: 2rem;
-  background: #25d366;
+  background: var(--primary);
   color: white;
   width: 50px;
   height: 50px;
@@ -396,13 +402,26 @@ nav a.active, nav a:hover {
   align-items: center;
   justify-content: center;
   font-size: 1.5rem;
-  box-shadow: 0 4px 20px rgba(37,211,102,0.3);
-  z-index: 100;
+  box-shadow: 0 4px 20px rgba(245,0,85,0.3);
+  z-index: 1000;
+  border: none;
+  cursor: pointer;
   transition: all 0.3s;
 }
-.whatsapp-btn:hover {
+.cart-float-btn:hover {
+  background: var(--primary-dark);
   transform: scale(1.1);
-  background: #128c7e;
+}
+.cart-float-btn .cart-count {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: var(--primary-dark);
+  color: white;
+  border-radius: 50%;
+  font-size: 0.8rem;
+  padding: 2px 6px;
+  font-weight: 700;
 }
 
 /* Botón volver arriba */
